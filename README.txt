@@ -19,3 +19,7 @@
 # Notes: 
 # 1. the script is run from a given working directory
 # 2. the scipu uses library {dplyr}
+
+# 3. !! some columns in the dataset are for standard deviations which are supposed to be positive numbers however none of the columns in the test and training dataset consists of positive numers only 
+## http://en.wikipedia.org/wiki/Standard_deviation
+
