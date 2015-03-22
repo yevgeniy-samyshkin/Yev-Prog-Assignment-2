@@ -164,11 +164,19 @@ cat("===== STEP II: COMBINING DATA TABLES", "\n")
 	df_x_walking <- filter(df_x, activity_no== 1)		
 	df_x_walking_upstairs  <- filter(df_x, activity_no== 2)
 	df_x_walking_downstairs  <- filter(df_x, activity_no== 3)
-	df_x_walking_sitting <- filter(df_x, activity_no== 4)
-	df_x_walking_standing <- filter(df_x, activity_no== 5)
-	df_x_walking_laying  <- filter(df_x, activity_no== 6)
+	df_x_sitting <- filter(df_x, activity_no== 4)
+	df_x_standing <- filter(df_x, activity_no== 5)
+	df_x_laying  <- filter(df_x, activity_no== 6)
 
-	df_x <- rbind(df_x_walking, df_x_walking_upstairs, df_x_walking_downstairs, df_x_walking_sitting, df_x_walking_standing, df_x_walking_laying)
+	df_x_walking<-mutate(df_x_walking, activity="WALKING")
+	df_x_walking_upstairs<-mutate(df_x_walking_upstairs,  activity="WALKING UPSTAIRS")
+	df_x_walking_downstairs<-mutate(df_x_walking_downstairs,  activity="WALKING DOWNSTAIRS")
+	df_x_sitting<-mutate(df_x_sitting,  activity="SITTING")
+	df_x_standing<-mutate(df_x_standing, activity="STANDING")
+	df_x_laying<-mutate(df_x_laying, activity="LAYING")
+
+
+	df_x <- rbind(df_x_walking, df_x_walking_upstairs, df_x_walking_downstairs, df_x_sitting, df_x_standing, df_x_laying)
 	df_x_final <-select(df_x, subject, activity, feature, mean, std)
 	
 
