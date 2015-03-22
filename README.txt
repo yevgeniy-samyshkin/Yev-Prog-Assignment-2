@@ -23,3 +23,5 @@
 # 3. !! some columns in the dataset are for standard deviations which are supposed to be positive numbers however none of the columns in the test and training dataset consists of positive numers only 
 ## http://en.wikipedia.org/wiki/Standard_deviation
 
+
+The output file name "summarized.txt"

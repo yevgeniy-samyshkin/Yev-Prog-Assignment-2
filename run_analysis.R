@@ -3,40 +3,29 @@
 
 # ====== Readme.txt ===========================================
 
-# Student - Yevgeniy SAMYSHKIN 
+# Yevgeniy SAMYSHKIN 
 # 22 March 2015 
 
-# This script contains the following: 
+# This script does the following: 
 
-# A brief description of the issues with the datasets and why in needs to be rearranged 
-
-# 1. Merging the training and the test data sets to create one data set.
-# 2. Extracting only the measurements on the mean and standard deviation for each measurement (#1 and #2 possibly can be done in reverse order)
+# 1. Merges the training and the test data sets to create one data set
+# 2. Extracts only the measurements on the mean() and standard deviation() for each measurement 
  
 # 3. Assigns descriptive activity names to name the activities in the data set
-# 4. Appropriately labels the data set with descriptive variable names. 
+# 4. Appropriately labels the data set with descriptive variable names 
 
-# 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject
+# 5. From the data set in Step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject
 
 # Notes: 
 # 1. the script is run from a given working directory
-# 2. the scipu uses library {dplyr}
+# 2. the scipt uses {dplyr}
+# 3. the script generate intermediate text lines showing the action being performed (using cat()) 
 
 # ====== Readme.txt ===========================================
 
-setwd("C:/Users/ys906826/Documents/04. Training/05. Coursera-R-II/course_project")
 library(dplyr)
 
-
-# Read files
-# str(df_features)
-
-	cat("===== STEP I: LOADING DATA TABLES", "\n")
-	df_features <-read.table("features.txt")
-	cat("Loading ... features.txt --> df_features", "\n")
-
-
-## DATA SET : TRAIN 
+cat("===== STEP I: LOADING DATA TABLES", "\n")
 
 # Data directory: /train -------------------------------------------
 
@@ -66,7 +55,7 @@ library(dplyr)
 	df_subject_test <-read.table("test/subject_test.txt")
 	
 
-cat("===== STEP II: COMBINING DATA TABLES", "\n")
+cat("===== STEP II: COMBINING DATA TABLES AND LABELLING DATA", "\n")
 
 ## Add paricipants' column to each data set 
 
@@ -121,45 +110,35 @@ cat("===== STEP II: COMBINING DATA TABLES", "\n")
 ## Combine datasets, further transformations to follow (creating a variable for Features)
 	df_x<-rbind(df_x_test, df_x_train)
 
-# Prepare a table that will contain columns for subject, activity_no, feature, mean() and std()
+# Prepare a table that will contain columns for subject, activity, feature, mean() and std()
 # create columns  
 
-	df_x<-mutate(df_x, activity="", feature="", mean=0, std=0)
+	df_x<-mutate(df_x, activity="")
 
-# dataset will contain only columns of interest (mean and sd for each feature):
-	df_x<-select(df_x, subject, activity_no, activity, feature, mean, std, V201:V202, V214:V215, V227:V228, V240:V241, V253:V254, V503:V504, V516:V517, V529:V530, V542:V543)
+# dataset will contain only columns of interest (mean and sTd for each feature):
+	df_x<-select(df_x, subject, activity_no, activity, V201:V202, V214:V215, V227:V228, V240:V241, V253:V254, V503:V504, V516:V517, V529:V530, V542:V543)
+
 
 # Rename columns to assign features (mean and std still in columns):
  
-	df_x<-rename(df_x, tBodyAccMag_mean=V201, tBodyAccMag_std=V202) 
-	df_x<-rename(df_x, tGravityAccMag_mean=V214, tGravityAccMag_std=V215) 
-	df_x<-rename(df_x, tBodyAccJerkMag_mean=V227, tBodyAccJerkMag_std=V228) 
-	df_x<-rename(df_x, tBodyGyroMag_mean=V240 , tBodyGyroMag_std=V241) 
-	df_x<-rename(df_x, tBodyGyroJerkMag_mean=V253, tBodyGyroJerkMag_std=V254)
-	df_x<-rename(df_x, fBodyAccMag_mean=V503, fBodyAccMag_std=V504)
-	df_x<-rename(df_x, fBodyBodyAccJerkMag_mean=V516, fBodyBodyAccJerkMag_std=V517)
-	df_x<-rename(df_x, fBodyBodyGyroMag_mean=V529, fBodyBodyGyroMag_std=V530)
-	df_x<-rename(df_x, fBodyBodyGyroJerkMag_mean=V542, fBodyBodyGyroJerkMag_std=V543)
+df_x<-rename(df_x, tBodyAccMag.mean=V201, tBodyAccMag.std=V202) 
+df_x<-rename(df_x, tGravityAccMag.mean=V214, tGravityAccMag.std=V215) 
 
+df_x<-rename(df_x, tBodyAccJerkMag.mean=V227, tBodyAccJerkMag.std=V228) 
+df_x<-rename(df_x, tBodyGyroMag.mean=V240 , tBodyGyroMag.std=V241) 
 
-# Move values from features columns into the mean and std columns:
+df_x<-rename(df_x, tBodyGyroJerkMag.mean=V253, tBodyGyroJerkMag.std=V254)
+df_x<-rename(df_x, fBodyAccMag.mean=V503, fBodyAccMag.std=V504)
 
-	df_x_1<-mutate(df_x, feature= "tBodyAccMag", 		mean=tBodyAccMag_mean, 			std=tBodyAccMag_std)
-	df_x_2<-mutate(df_x, feature= "tGravityAccMag", 	mean=tGravityAccMag_mean, 		std=tGravityAccMag_std)
-	df_x_3<-mutate(df_x, feature= "tBodyAccJerkMag", 	mean=tBodyAccJerkMag_mean, 		std=tBodyAccJerkMag_std)
-	df_x_4<-mutate(df_x, feature= "tBodyGyroMag", 		mean=tBodyGyroMag_mean, 		std=tBodyGyroMag_std)
-	df_x_5<-mutate(df_x, feature= "tBodyGyroJerkMag", 	mean=tBodyGyroJerkMag_mean, 		std=tBodyGyroJerkMag_std)
-	df_x_6<-mutate(df_x, feature= "fBodyAccMag", 		mean=tBodyGyroJerkMag_mean, 		std=tBodyGyroJerkMag_std)
-	df_x_7<-mutate(df_x, feature= "fBodyBodyAccJerkMag", 	mean=fBodyBodyAccJerkMag_mean, 	std=fBodyBodyAccJerkMag_std)
-	df_x_8<-mutate(df_x, feature= "fBodyBodyGyroMag", 	mean=fBodyBodyGyroMag_mean, 		std=fBodyBodyGyroMag_std)
-	df_x_9<-mutate(df_x, feature= "fBodyBodyGyroJerkMag", mean=fBodyBodyGyroJerkMag_mean, 	std=fBodyBodyGyroJerkMag_std)
+df_x<-rename(df_x, fBodyBodyAccJerkMag.mean=V516, fBodyBodyAccJerkMag.std=V517)
 
+df_x<-rename(df_x, fBodyBodyGyroMag.mean=V529, fBodyBodyGyroMag.std=V530)
+df_x<-rename(df_x, fBodyBodyGyroJerkMag.mean=V542, fBodyBodyGyroJerkMag.std=V543)
 
-	df_x<-rbind(df_x_1, df_x_2, df_x_3, df_x_4, df_x_5, df_x_6, df_x_7, df_x_8, df_x_9)
 	
-	# The dataset with variables organised, activity still to be labelled 
+# The dataset with variables organised, activity still to be labelled 
 
-	df_x<-select(df_x, subject, activity_no, activity, feature, mean, std)
+#####	df_x<-select(df_x, subject, activity_no, activity, )
 
 	df_x_walking <- filter(df_x, activity_no== 1)		
 	df_x_walking_upstairs  <- filter(df_x, activity_no== 2)
@@ -168,23 +147,50 @@ cat("===== STEP II: COMBINING DATA TABLES", "\n")
 	df_x_standing <- filter(df_x, activity_no== 5)
 	df_x_laying  <- filter(df_x, activity_no== 6)
 
-	df_x_walking<-mutate(df_x_walking, activity="WALKING")
-	df_x_walking_upstairs<-mutate(df_x_walking_upstairs,  activity="WALKING UPSTAIRS")
-	df_x_walking_downstairs<-mutate(df_x_walking_downstairs,  activity="WALKING DOWNSTAIRS")
-	df_x_sitting<-mutate(df_x_sitting,  activity="SITTING")
-	df_x_standing<-mutate(df_x_standing, activity="STANDING")
-	df_x_laying<-mutate(df_x_laying, activity="LAYING")
+	df_x_walking<-mutate(df_x_walking, activity="1.WALKING")
+	df_x_walking_upstairs<-mutate(df_x_walking_upstairs,  activity="2.WALKING UPSTAIRS")
+	df_x_walking_downstairs<-mutate(df_x_walking_downstairs,  activity="3.WALKING DOWNSTAIRS")
+	df_x_sitting<-mutate(df_x_sitting,  activity="4.SITTING")
+	df_x_standing<-mutate(df_x_standing, activity="5.STANDING")
+	df_x_laying<-mutate(df_x_laying, activity="6.LAYING")
 
 
 	df_x <- rbind(df_x_walking, df_x_walking_upstairs, df_x_walking_downstairs, df_x_sitting, df_x_standing, df_x_laying)
-	df_x_final <-select(df_x, subject, activity, feature, mean, std)
+
+
+# Summary: df_x_final is a tidy dataset in which eack line is a measurement for one subject with means and standard deviations presented
+# each measurement for subjects is characterised by activity
+
+# * note that columns labelled in dataset as standard deciations have negative values (whereas STD is supposed to be positive in statistics)- I do not have explanation and the numbers are presented as they are
+# I have checked the row datasets - no single column is repretented by positivie numbers only 
+
+
+# In the summary I have included only the averages of the mean values, as the averages of standard deviations does mu make obvious sense, but the principle remains the same   
+
+grouped <-group_by(df_x, subject, activity)
+
+summarized <-summarize(grouped, 
+	m.tBodyAccMag= mean(tBodyAccMag.mean), 
+	m.tGravityAccMag=mean(tGravityAccMag.mean), 
+	m.tBodyAccJerkMag=mean(tBodyAccJerkMag.mean), 
+	m.tBodyGyroMag=mean(tBodyGyroMag.mean),
+	m.tBodyGyroJerkMag=mean(tBodyGyroJerkMag.mean),
+	m.fBodyAccMag=mean(fBodyAccMag.mean),
+	m.fBodyBodyAccJerkMag=mean(fBodyBodyAccJerkMag.mean),
+	m.fBodyBodyGyroMag=mean(fBodyBodyGyroMag.mean),
+	m.fBodyBodyGyroJerkMag=mean(fBodyBodyGyroJerkMag.mean))
+
+# >head(summarized)
 	
+#  subject             activity m.tBodyAccMag m.tGravityAccMag m.tBodyAccJerkMag m.tBodyGyroMag m.tBodyGyroJerkMag m.fBodyAccMag m.fBodyBodyAccJerkMag
+# 1       1            1.WALKING   -0.13697118      -0.13697118       -0.14142881    -0.16097955         -0.2987037   -0.12862345           -0.05711940
+# 2       1   2.WALKING UPSTAIRS   -0.12992763      -0.12992763       -0.46650345    -0.12673559         -0.5948829   -0.35239594           -0.44265216
+# 3       1 3.WALKING DOWNSTAIRS    0.02718829       0.02718829       -0.08944748    -0.07574125         -0.2954638    0.09658453            0.02621849
+# 4       1            4.SITTING   -0.94853679      -0.94853679       -0.98736420    -0.93089249         -0.9919763   -0.94778292           -0.98526213
+# 5       1           5.STANDING   -0.98427821      -0.98427821       -0.99236779    -0.97649379         -0.9949668   -0.98535636           -0.99254248
+# 6       1             6.LAYING   -0.84192915      -0.84192915       -0.95439626    -0.87475955         -0.9634610   -0.86176765           -0.93330036
+# Variables not shown: m.fBodyBodyGyroMag, m.fBodyBodyGyroJerkMag
 
-
-
-
-### =======================================================================
-
-
+cat("Script completed", "\n")
 
 
