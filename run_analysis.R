@@ -75,8 +75,8 @@ cat("===== STEP II: COMBINING DATA TABLES", "\n")
 	df_subject_test<-rename(df_subject_test, subject=V1)
 	df_subject_train<-rename(df_subject_train, subject=V1)
 	
-	df_y_test<-rename(df_y_test, activity=V1)
-	df_y_train<-rename(df_y_train, activity=V1)
+	df_y_test<-rename(df_y_test, activity_no=V1)
+	df_y_train<-rename(df_y_train, activity_no=V1)
  
 
 # In tables df_x_test and df x_train - keep only the columns with the means and standard deviations for each activity 
@@ -121,12 +121,13 @@ cat("===== STEP II: COMBINING DATA TABLES", "\n")
 ## Combine datasets, further transformations to follow (creating a variable for Features)
 	df_x<-rbind(df_x_test, df_x_train)
 
-# Prepare a table that will contain columns for subject, activity, feature, mean() and std()
+# Prepare a table that will contain columns for subject, activity_no, feature, mean() and std()
 # create columns  
-	df_x<-mutate(df_x, feature="", mean=0, std=0)
+
+	df_x<-mutate(df_x, activity="", feature="", mean=0, std=0)
 
 # dataset will contain only columns of interest (mean and sd for each feature):
-	df_x<-select(df_x, subject, activity, feature, V201:V202, V214:V215, V227:V228, V240:V241, V253:V254, V503:V504, V516:V517, V529:V530, V542:V543)
+	df_x<-select(df_x, subject, activity_no, activity, feature, mean, std, V201:V202, V214:V215, V227:V228, V240:V241, V253:V254, V503:V504, V516:V517, V529:V530, V542:V543)
 
 # Rename columns to assign features (mean and std still in columns):
  
@@ -153,13 +154,25 @@ cat("===== STEP II: COMBINING DATA TABLES", "\n")
 	df_x_8<-mutate(df_x, feature= "fBodyBodyGyroMag", 	mean=fBodyBodyGyroMag_mean, 		std=fBodyBodyGyroMag_std)
 	df_x_9<-mutate(df_x, feature= "fBodyBodyGyroJerkMag", mean=fBodyBodyGyroJerkMag_mean, 	std=fBodyBodyGyroJerkMag_std)
 
+
 	df_x<-rbind(df_x_1, df_x_2, df_x_3, df_x_4, df_x_5, df_x_6, df_x_7, df_x_8, df_x_9)
 	
-	# The final dataset with variables  organised 
+	# The dataset with variables organised, activity still to be labelled 
 
-	df_x_final<-select(df_x, subject, activity, feature, mean, std)
+	df_x<-select(df_x, subject, activity_no, activity, feature, mean, std)
 
-	# names: "subject", "activity", "feature",  "mean",   "std"   
+	df_x_walking <- filter(df_x, activity_no== 1)		
+	df_x_walking_upstairs  <- filter(df_x, activity_no== 2)
+	df_x_walking_downstairs  <- filter(df_x, activity_no== 3)
+	df_x_walking_sitting <- filter(df_x, activity_no== 4)
+	df_x_walking_standing <- filter(df_x, activity_no== 5)
+	df_x_walking_laying  <- filter(df_x, activity_no== 6)
+
+	df_x <- rbind(df_x_walking, df_x_walking_upstairs, df_x_walking_downstairs, df_x_walking_sitting, df_x_walking_standing, df_x_walking_laying)
+	df_x_final <-select(df_x, subject, activity, feature, mean, std)
+	
+
+
 
 
 ### =======================================================================
